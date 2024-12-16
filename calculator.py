@@ -1,5 +1,7 @@
-import math  # needed for the square root thing
+import math
+from datetime import datetime
 
+# operations
 def add(x, y):
     return x + y
 
@@ -12,75 +14,79 @@ def multiply(x, y):
 def divide(x, y):
     if y == 0:
         return "Error: You can't divide by zero."
-    else:
-        return x / y
+    return x / y
 
 def square_root(x):
     if x < 0:
         return "Error: Cannot calculate the square root of a negative number."
     return math.sqrt(x)
 
-# to save history
-history = []
+# display the main menu
+def display_menu():
+    print("\nSelect operation:")
+    print("1. Add")
+    print("2. Subtract")
+    print("3. Multiply")
+    print("4. Divide")
+    print("5. More...")
 
-# main things idk
-print("Select operation.")
-print("1.Add")
-print("2.Subtract")
-print("3.Multiply")
-print("4.Divide")
-print("5.More...")
+# display the 'More' menu
+def display_more_menu():
+    print("\nMore options:")
+    print("1. Square Root")
+    print("2. History")
 
-while True:
-    choice = input("Enter choice(1/2/3/4/5): ")
-
-    if choice in ('1', '2', '3', '4', '5'):
-        if choice == '5':
-            # extras
-            print("More options:")
-            print("1.Square Root")
-            print("2.History")
-            more_choice = input("Enter choice(1/2): ")
-
+# main program
+def main():
+    history = []
+    operations = {
+        '1': (add, '+'),
+        '2': (subtract, '-'),
+        '3': (multiply, '*'),
+        '4': (divide, '/')
+    }
+    
+    while True:
+        display_menu()
+        choice = input("Enter choice (1/2/3/4/5): ")
+        
+        if choice in operations:
+            try:
+                num1 = float(input("Enter first number: "))
+                num2 = float(input("Enter second number: "))
+                operation, symbol = operations[choice]
+                result = operation(num1, num2)
+                print(f"Result: {result}")
+                history.append(f"{datetime.now()}: {num1} {symbol} {num2} = {result}")
+            except ValueError:
+                print("Invalid number input.")
+        elif choice == '5':
+            display_more_menu()
+            more_choice = input("Enter choice (1/2): ")
+            
             if more_choice == '1':
-                num = float(input("Enter number: "))
-                result = square_root(num)
-                print("√", num, "=", result)
-                history.append(f"√{num} = {result}")
+                try:
+                    num = float(input("Enter number: "))
+                    result = square_root(num)
+                    print(f"√{num} = {result}")
+                    history.append(f"{datetime.now()}: √{num} = {result}")
+                except ValueError:
+                    print("Invalid number input.")
             elif more_choice == '2':
-                print("Calculation History:")
+                print("\nCalculation History:")
                 if history:
-                    for entry in history:
-                        print(entry)
+                    print("\n".join(history))
                 else:
                     print("No history available.")
             else:
-                print("Invalid Input in 'More' menu.")
-
+                print("Invalid input in 'More' menu.")
         else:
-            num1 = float(input("Enter first number: "))
-            num2 = float(input("Enter second number: "))
+            print("Invalid input.")
 
-            if choice == '1':
-                result = add(num1, num2)
-                print(num1, "+", num2, "=", result)
-                history.append(f"{num1} + {num2} = {result}")
-            elif choice == '2':
-                result = subtract(num1, num2)
-                print(num1, "-", num2, "=", result)
-                history.append(f"{num1} - {num2} = {result}")
-            elif choice == '3':
-                result = multiply(num1, num2)
-                print(num1, "*", num2, "=", result)
-                history.append(f"{num1} * {num2} = {result}")
-            elif choice == '4':
-                result = divide(num1, num2)
-                print(num1, "/", num2, "=", result)
-                history.append(f"{num1} / {num2} = {result}")
-
-        # Ask if user wants to do another calculation
-        next_calculation = input("Let's do next calculation? (yes/no): ")
-        if next_calculation.lower() != "yes":
+        next_calculation = input("\nDo another calculation? (yes/no): ").strip().lower()
+        if next_calculation != 'yes':
+            print("Goodbye!")
             break
-    else:
-        print("Invalid Input")
+
+if __name__ == "__main__":
+    main()
